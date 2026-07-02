@@ -1,0 +1,22 @@
+**/.next/
+frontend/.next/
+
+# Node
+frontend/node_modules/
+
+# Environment
+frontend/.env.local
+frontend/.env
+backend/.env
+
+# Python
+backend/venv/
+backend/__pycache__/
+*.pyc
+
+# Reports
+test_reports/
+*.xml
+
+# Git config
+.gitconfig

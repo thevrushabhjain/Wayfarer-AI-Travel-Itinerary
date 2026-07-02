@@ -1,0 +1,124 @@
+{
+  "theme": "Dark Mode (High-Contrast Monochrome)",
+  "archetype": "4 (Swiss & High-Contrast)",
+  "typography": {
+    "headings": {
+      "fontFamily": "Geist, sans-serif",
+      "weights": ["400", "500", "600"],
+      "tracking": "tracking-tight",
+      "sizes": {
+        "h1": "text-4xl sm:text-5xl",
+        "h2": "text-2xl sm:text-3xl",
+        "h3": "text-xl sm:text-2xl",
+        "h4": "text-lg sm:text-xl"
+      }
+    },
+    "body": {
+      "fontFamily": "Geist, sans-serif",
+      "weights": ["400", "500"],
+      "tracking": "tracking-normal",
+      "sizes": {
+        "base": "text-sm sm:text-base",
+        "small": "text-xs sm:text-sm"
+      }
+    },
+    "mono": {
+      "fontFamily": "Geist Mono, monospace",
+      "usage": "Use for overlines, dates, budget numbers, times, and technical metadata. Example: 'DAY 01', '$1,200'"
+    },
+    "rules": [
+      "No generic sans fonts like Inter or Roboto for headings.",
+      "Never use center alignment for long text; default to left-aligned.",
+      "Overlines must be uppercase, tiny, wide spacing (tracking-widest)."
+    ]
+  },
+  "colors": {
+    "background": "bg-black",
+    "foreground": "text-zinc-100",
+    "muted": "text-zinc-400",
+    "border": "border-zinc-800 or border-zinc-900",
+    "surface": "bg-zinc-950",
+    "surfaceHover": "bg-zinc-900",
+    "primary": "bg-white text-black",
+    "banned": [
+      "Any color that is not a shade of gray, black, or white.",
+      "Colorful gradients.",
+      "Blue, red, green, teal, purple."
+    ],
+    "rules": [
+      "Strictly monochrome. Rely on contrast (pure white vs black) to guide the user's eye."
+    ]
+  },
+  "layout": {
+    "strategy": "Progressive Disclosure (Linear/Vercel style)",
+    "phases": {
+      "phase_1_chat": "Centered, minimal conversational interface. Resembles a Raycast command bar or an intelligent terminal. Lots of whitespace around the chat. Do not expose chain-of-thought.",
+      "phase_2_dashboard": "Expands into a dense, card-based dashboard layout once itinerary is finalized."
+    },
+    "spacing": "Generous. Use p-6 to p-8 inside cards.",
+    "dashboard_grid": "Bento-style or structured multi-column. Example: Overview card spans full width. Hotels and Food in a 2-column grid. Day-wise timeline as a vertical stack.",
+    "background_pattern": "Use a subtle CSS grid for the SaaS aesthetic: bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"
+  },
+  "components": {
+    "cards": {
+      "style": "bg-zinc-950 or bg-transparent, border border-zinc-800, rounded-xl.",
+      "shadows": "No soft drop shadows. Flat UI with 1px borders.",
+      "hover": "Subtle background shift to bg-zinc-900."
+    },
+    "buttons": {
+      "primary": "bg-white text-black font-medium rounded-md px-4 py-2 hover:bg-zinc-200 transition-colors",
+      "secondary": "bg-transparent text-zinc-100 border border-zinc-800 rounded-md px-4 py-2 hover:bg-zinc-900 transition-colors"
+    },
+    "timeline": "Vertical left-aligned line (border-l border-zinc-800). Timeline nodes are small pure white dots (bg-white).",
+    "chat_bubbles": {
+      "user": "bg-zinc-900 text-white rounded-lg px-4 py-3 max-w-[80%]",
+      "ai": "bg-transparent text-zinc-300 rounded-lg py-3 max-w-[90%]"
+    },
+    "inputs": "Flat, bg-transparent, border border-zinc-800, focus:ring-1 focus:ring-white focus:border-white, text-white."
+  },
+  "animation": {
+    "transitions": "Subtle opacity and transform only (e.g., fade in, slide up 4px). Use Framer Motion if needed.",
+    "speed": "Fast and snappy (duration: 0.15s - 0.2s).",
+    "banned": ["Bouncy effects", "Playful spring animations", "Over-the-top page transitions"]
+  },
+  "icons": {
+    "library": "lucide-react",
+    "style": "strokeWidth={1.5} for a thinner, more premium technical look.",
+    "banned": ["Emojis anywhere in the UI. Use Lucide icons instead."]
+  },
+  "media": {
+    "image_urls": [
+      {
+        "url": "https://images.unsplash.com/photo-1700646751436-4605e23147db?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NjZ8MHwxfHNlYXJjaHw0fHx0b2t5byUyMGNpdHklMjBzdHJlZXR8ZW58MHx8fGJsYWNrX2FuZF93aGl0ZXwxNzgyOTg3MDczfDA&ixlib=rb-4.1.0&q=85",
+        "category": "destination_placeholder",
+        "description": "B&W Tokyo city street for Trip Overview or Destination cards"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1558976825-6b1b03a03719?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA3MDR8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjBob3RlbCUyMHJvb218ZW58MHx8fGJsYWNrX2FuZF93aGl0ZXwxNzgyOTg3MDczfDA&ixlib=rb-4.1.0&q=85",
+        "category": "hotel_placeholder",
+        "description": "B&W Luxury hotel room for Accommodation recommendations"
+      },
+      {
+         "url": "https://images.unsplash.com/photo-1610463075175-67d577932cfe?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NjZ8MHwxfHNlYXJjaHwxfHx0b2t5byUyMGNpdHklMjBzdHJlZXR8ZW58MHx8fGJsYWNrX2FuZF93aGl0ZXwxNzgyOTg3MDczfDA&ixlib=rb-4.1.0&q=85",
+         "category": "timeline_activity_placeholder",
+         "description": "B&W City street perspective for timeline activities/local experiences"
+      }
+    ],
+    "rules": "All images MUST be grayscale to match the strict monochrome rule. Apply CSS filter: grayscale(100%) or use grayscale Tailwind utility `grayscale` if using external images."
+  },
+  "accessibility": {
+    "contrast": "Ensure text-zinc-400 against bg-black passes WCAG AA. If not, use text-zinc-300.",
+    "focus": "Always include focus visible states: focus-visible:ring-1 focus-visible:ring-white."
+  },
+  "testing": {
+    "attributes": "All interactive and key informational elements MUST include a `data-testid` attribute (e.g., data-testid='submit-button')."
+  },
+  "instructions_to_main_agent": [
+    "Absolutely NO Next.js, Vercel, FastAPI, or AI framework branding/logos anywhere in the app.",
+    "Ensure the UI uses ONLY grayscale colors (black, white, zinc/neutral). Do not use any colored gradients, colored borders, or colored text.",
+    "Use standard HTML + Tailwind for structural layouts to ensure maximum control over the grid and spacing. You can use Shadcn UI for interactive components like Select or Dialog, but strip away any default colors.",
+    "Implement the conversational flow as a central, distraction-free interface. Only show progress states (e.g., 'Planning itinerary...') during loading. No exposed raw LLM thinking.",
+    "Once generated, display the itinerary as a polished dashboard. Utilize the background grid pattern globally.",
+    "Use 'Geist' and 'Geist Mono' for typography as they are default in Next.js 15."
+  ]
+}
