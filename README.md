@@ -1,213 +1,366 @@
-# Wayfarer — AI Travel Itinerary Generator
+# ✈️ Wayfarer – AI Travel Itinerary Generator
 
-Wayfarer is a production-quality, agentic AI travel planning application. It has a
-genuine conversation with the traveler, extracts structured trip requirements,
-asks only for what's still missing, plans a trip strategy, generates a fully
-detailed itinerary, and validates its own output before showing it — all
-rendered as a polished, monochrome dashboard.
+An intelligent AI-powered travel planning assistant that interacts naturally with users, understands their travel preferences through conversation, asks only the necessary follow-up questions, and generates personalized day-wise travel itineraries.
 
-This is a standalone application with its own identity: no references to any
-AI builder platform, no framework branding, and no third-party/proprietary
-SDKs. Only public packages from PyPI and npm are used.
+The application follows an **agentic workflow**, where multiple specialized AI agents collaborate to understand the user's requirements, plan the trip, validate the itinerary, and present everything inside a modern interactive dashboard.
 
-## Architecture
+---
+
+# 📸 Screenshots
+
+## 🏠 Home Page
+
+> Add your homepage screenshot here.
+
+![Home Page](images/home.png)
+
+---
+
+## 🗺️ Generated Itinerary
+
+> Add your generated itinerary screenshot here.
+
+![Generated Itinerary](images/itinerary.png)
+
+---
+
+# ✨ Features
+
+- 🤖 Natural conversational AI assistant
+- 🧠 Agentic multi-step reasoning pipeline
+- 💬 Context-aware follow-up questions
+- 📍 Intelligent destination planning
+- 📅 Day-wise itinerary generation
+- 💰 Budget estimation & breakdown
+- 🏨 Hotel recommendations
+- 🚆 Transportation planning
+- 🍽️ Food recommendations
+- 🎒 Smart packing checklist
+- 🌦️ Travel tips & local suggestions
+- 💾 Conversation memory using PostgreSQL
+- 🔄 Itinerary refinement through follow-up prompts
+- ⚡ Streaming responses using Server-Sent Events (SSE)
+- 🔌 Supports Gemini, Groq and OpenAI with a provider abstraction layer
+
+---
+
+# 🛠 Tech Stack
+
+## Frontend
+
+- Next.js 15
+- React 19
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+- Framer Motion
+
+## Backend
+
+- FastAPI
+- SQLAlchemy
+- PostgreSQL
+- Pydantic
+
+## AI
+
+- Google Gemini
+- Groq
+- OpenAI
+
+## Deployment
+
+- Vercel
+- Railway
+
+---
+
+# 🧠 Agentic Workflow
+
+Unlike a traditional chatbot that relies on a single prompt, Wayfarer follows a multi-stage agentic pipeline.
 
 ```
-┌─────────────────────┐        SSE / HTTPS        ┌──────────────────────────┐
-│   Next.js 15 (TS)    │ ─────────────────────────▶│  FastAPI backend         │
-│   Frontend           │◀───────────────────────── │  (agentic pipeline)      │
-└─────────────────────┘                            └──────────────────────────┘
-                                                              │
-                                                              ▼
-                                                    ┌──────────────────────┐
-                                                    │  PostgreSQL           │
-                                                    │  (conversation memory)│
-                                                    └──────────────────────┘
-                                                              │
-                                                              ▼
-                                                    ┌──────────────────────┐
-                                                    │  LLM Provider Layer   │
-                                                    │  Gemini / OpenAI /Groq│
-                                                    └──────────────────────┘
+User Prompt
+      │
+      ▼
+Extractor Agent
+      │
+      ▼
+Clarifier Agent
+      │
+      ▼
+Planner Agent
+      │
+      ▼
+Recommendation Agent
+      │
+      ▼
+Validator Agent
+      │
+      ▼
+Interactive Dashboard
 ```
 
-### Agentic pipeline (backend)
+### 1️⃣ Extractor Agent
 
-Each stage below is an independent, collaborating service module — the
-backend is not a single prompt, it is a small pipeline of specialized agents
-orchestrated by `OrchestratorService`:
+Extracts structured trip information from natural language while remembering previous conversation history.
 
-1. **Extractor agent** (`services/extractor_service.py`) — turns natural
-   language + conversation history into structured `TripInfo` (destination,
-   dates, travelers, budget, interests, pace, hotel preference, dietary
-   preferences), merging with what's already known.
-2. **Clarifier agent** (`services/clarifier_service.py`) — if required
-   information is missing, asks exactly one natural, context-aware question
-   for the next missing field (never repeats known info).
-3. **Planner agent** (`services/planner_service.py`) — "planning before
-   execution": produces a lightweight day-by-day strategy/skeleton before any
-   detailed content is written.
-4. **Recommendation agent** (`services/recommendation_service.py`) — the
-   itinerary architect: expands the skeleton into the full structured
-   itinerary (day plans, hotels, transportation, food, budget, packing,
-   tips), and later handles revision requests.
-5. **Validator agent** (`services/validator_service.py`) — a reflection step:
-   runs deterministic checks (day count, budget sums, missing sections) and,
-   if issues are found, performs a single LLM repair pass before the result
-   is ever returned to the user.
+Examples:
 
-The user only ever sees three simple progress states — `Understanding your
-request`, `Planning itinerary`, `Finalizing itinerary` — streamed over
-Server-Sent Events. No chain-of-thought or internal reasoning is ever exposed.
+- Destination
+- Budget
+- Duration
+- Number of travellers
+- Interests
+- Food preferences
+- Hotel preferences
+- Travel pace
 
-### LLM provider abstraction
+---
 
-`app/llm/base.py` defines an `LLMProvider` interface with two methods:
-`generate_structured` (schema-constrained JSON, used for extraction/planning/
-itinerary generation) and `generate_text` (free-form, used for clarifying
-questions). `GeminiProvider`, `OpenAIProvider`, and `GroqProvider` all
-implement this exact interface. Switching providers is one environment
-variable — **no application code changes required**:
+### 2️⃣ Clarifier Agent
 
-```bash
-LLM_PROVIDER=gemini   # or: openai, groq
+If any important information is missing, the assistant asks only the next most relevant question instead of overwhelming the user.
+
+Example:
+
+> User: Plan a trip to Japan.
+
+Assistant:
+
+- When are you planning to travel?
+- What's your approximate budget?
+
+---
+
+### 3️⃣ Planner Agent
+
+Creates a high-level travel plan before generating detailed recommendations.
+
+---
+
+### 4️⃣ Recommendation Agent
+
+Generates the complete itinerary including:
+
+- Day-wise schedule
+- Hotels
+- Transportation
+- Food recommendations
+- Budget allocation
+- Packing checklist
+- Travel tips
+
+---
+
+### 5️⃣ Validator Agent
+
+Performs a validation pass before returning the itinerary to ensure:
+
+- Budget consistency
+- Day count correctness
+- Required sections exist
+- Overall response quality
+
+---
+
+# 📂 Project Structure
+
 ```
+Wayfarer
+│
+├── backend
+│   ├── app
+│   │   ├── core
+│   │   ├── llm
+│   │   ├── models
+│   │   ├── prompts
+│   │   ├── routes
+│   │   ├── schemas
+│   │   ├── services
+│   │   └── utils
+│   ├── requirements.txt
+│   └── server.py
+│
+├── frontend
+│   ├── app
+│   ├── components
+│   ├── hooks
+│   ├── lib
+│   └── package.json
+│
+├── images
+│   ├── home.png
+│   └── itinerary.png
+│
+└── README.md
+```
+
+---
+
+# 🚀 Getting Started
 
 ## Prerequisites
 
 - Python 3.11+
-- Node.js 20+ and npm
+- Node.js 20+
 - PostgreSQL 14+
 
-## Backend setup
+---
+
+## Backend Setup
 
 ```bash
 cd backend
-python3 -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
+
+python -m venv venv
+
+# Windows
+venv\Scripts\activate
+
+# Linux / macOS
+source venv/bin/activate
+
 pip install -r requirements.txt
 ```
 
-Create `backend/.env` (see `backend/.env.example`):
+Create `.env`
 
 ```env
-LLM_PROVIDER=gemini
-GEMINI_API_KEY=your_gemini_api_key_here
-GEMINI_MODEL=gemini-2.5-flash
+LLM_PROVIDER=groq
 
-OPENAI_API_KEY=
-OPENAI_MODEL=gpt-4o-mini
+GROQ_API_KEY=YOUR_API_KEY
 
-GROQ_API_KEY=
-GROQ_MODEL=llama-3.3-70b-versatile
+DATABASE_URL=postgresql+asyncpg://postgres:password@localhost:5432/travel_itinerary
 
-DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/travel_itinerary
 CORS_ORIGINS=http://localhost:3000
-LOG_LEVEL=INFO
 ```
 
-Get a free Gemini API key at https://aistudio.google.com/apikey.
-
-Create the database (tables are created automatically on startup):
+Start the backend
 
 ```bash
-createdb travel_itinerary
-# or: psql -c "CREATE DATABASE travel_itinerary;"
+uvicorn server:app --reload --port 8001
 ```
 
-Run the backend:
+---
 
-```bash
-uvicorn server:app --host 0.0.0.0 --port 8001 --reload
-```
-
-The API is now available at `http://localhost:8001/api`, with interactive
-docs at `http://localhost:8001/docs`.
-
-## Frontend setup
+## Frontend Setup
 
 ```bash
 cd frontend
+
 npm install
 ```
 
-Create `frontend/.env.local`:
+Create `.env.local`
 
 ```env
 NEXT_PUBLIC_BACKEND_URL=http://localhost:8001
 ```
 
-Run the dev server:
+Run
 
 ```bash
 npm run dev
 ```
 
-Open `http://localhost:3000`.
+Open
 
-For a production build:
-
-```bash
-npm run build
-npm run start:prod
+```
+http://localhost:3000
 ```
 
-## Switching LLM providers
+---
 
-Set `LLM_PROVIDER` to `openai` or `groq` and provide the matching API key —
-no code changes needed:
+# 🔄 Switching LLM Providers
+
+Simply change the provider inside `.env`.
+
+### Gemini
 
 ```env
-LLM_PROVIDER=openai
-OPENAI_API_KEY=sk-...
-OPENAI_MODEL=gpt-4o-mini
+LLM_PROVIDER=gemini
+GEMINI_API_KEY=YOUR_KEY
 ```
+
+### Groq
 
 ```env
 LLM_PROVIDER=groq
-GROQ_API_KEY=gsk_...
-GROQ_MODEL=llama-3.3-70b-versatile
+GROQ_API_KEY=YOUR_KEY
 ```
 
-## API overview
+### OpenAI
 
-| Method | Path                          | Description                                              |
-|--------|-------------------------------|------------------------------------------------------------|
-| POST   | `/api/chat/stream`            | Main conversational endpoint. Server-Sent Events stream of `progress` and `result` events. |
-| GET    | `/api/chat/{session_id}/history` | Full conversation history, trip info, and latest itinerary for a session. |
-| GET    | `/api/itinerary/{session_id}` | The latest generated itinerary for a session. |
-| GET    | `/api/health`                 | Health check. |
-
-## Project structure
-
-```
-backend/
-  server.py                # uvicorn entrypoint
-  app/
-    core/                   # settings, database, logging
-    models/                 # SQLAlchemy ORM models (conversation memory)
-    schemas/                # Pydantic schemas (structured LLM I/O + API contracts)
-    llm/                    # provider abstraction (base, gemini, openai, groq, factory)
-    prompts/                # prompt templates per agent
-    services/               # collaborating agents + orchestrator
-    routes/                 # FastAPI routers
-    utils/                  # field rules, schema conversion helpers
-
-frontend/
-  app/                      # Next.js App Router pages, layout, global styles
-  components/
-    chat/                   # conversational UI
-    dashboard/              # itinerary dashboard sections
-    layout/                 # background/grid
-    ui/                     # shadcn/ui primitives
-  hooks/                    # use-chat (conversation state + SSE client)
-  lib/                      # api client, types, session, utils
+```env
+LLM_PROVIDER=openai
+OPENAI_API_KEY=YOUR_KEY
 ```
 
-## Notes on data persistence
+No code changes are required.
 
-Conversation memory (trip requirements, message history) and generated
-itineraries are stored in PostgreSQL via SQLAlchemy's async engine. Tables
-are created automatically on startup via `Base.metadata.create_all` — this is
-intentional for a project of this scope; introduce Alembic if you need
-versioned migrations later.
+---
+
+# 🌐 API Endpoints
+
+| Method | Endpoint | Description |
+|----------|----------------------------|--------------------------------|
+| POST | `/api/chat/stream` | Conversational chat endpoint |
+| GET | `/api/chat/{session_id}/history` | Conversation history |
+| GET | `/api/itinerary/{session_id}` | Latest itinerary |
+| GET | `/api/health` | Health check |
+
+---
+
+# 💬 Example Conversation
+
+### User
+
+> Plan a 7-day trip to Japan.
+
+### Assistant
+
+- When are you planning to travel?
+- What's your budget?
+- How many travellers?
+
+---
+
+### User
+
+October, ₹2 lakh, 2 people.
+
+---
+
+### Assistant
+
+Generates a complete itinerary dashboard with:
+
+- Day-wise schedule
+- Hotel recommendations
+- Budget breakdown
+- Transportation
+- Food suggestions
+- Packing checklist
+- Travel tips
+
+---
+
+# 🚀 Future Improvements
+
+- Flight booking integration
+- Google Maps integration
+- Hotel booking APIs
+- Weather forecasting
+- PDF itinerary export
+- Expense tracker
+- Multi-language support
+- Calendar synchronization
+
+---
+
+# 👨‍💻 Author
+
+**Vrushabh Jain**
+
+If you found this project useful, consider giving it a ⭐ on GitHub.
